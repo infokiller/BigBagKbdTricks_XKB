@@ -34,9 +34,10 @@ MyNAME=`basename $0`
 X11DIR='/usr/share/X11'; [ -d "${X11DIR}" ] || X11DIR='/usr/lib/X11'
 
 #~ XKBmodel=pc104awide-zqu	# ANSI-104 keyboard w/ Angle(Z)Wide(Quote) mod
-XKBmodel=pc105awide-sl	# ISO-105 keyboard w/ AngleWide(Slash) mod
+# XKBmodel=pc105awide-sl	# ISO-105 keyboard w/ AngleWide(Slash) mod
+XKBmodel=pc105
 #~ XKBlayout='us(cmk_ed_us),gr(colemak),ru(colemak)'
-XKBlayout='no(cmk_ed_us)'	# Norwegian Colemak[eD]'Universal Symbols' layout
+XKBlayout='us'
 XKBoption='misc:extend,lv5:caps_switch_lock,grp:shifts_toggle,compose:menu'
 VerboseLvl=9			# (-v) How much info should setxkbmap print out?
 KeepXKM='no'			# (-k) Retain old /var/lib/xkb/server-*.xkm files?
@@ -153,7 +154,8 @@ if [ -n "${SetXStr}" ]; then	# Use the ShortStr notation
 
 		  *)	MyError "ShortStr model '${SetXStr[0]}' unknown!" ;;
 	esac
-	XKBlayout="${SetXStr[1]}(cmk_ed_${SetXStr[2]})"
+	# XKBlayout="${SetXStr[1]}(cmk_ed_${SetXStr[2]})"
+	XKBlayout="${SetXStr[1]}(${SetXStr[2]})"
 fi
 ##TODO: Add curl mods to models?!? Then, new shortstr codes are needed
 #       Enough to do the left hand and full!

@@ -64,7 +64,7 @@ DoBackup='ifnone'	# (-n/b) Default backup behavior is "if no backups are found"
 SubDirs='all'		# (-m) Directory/-ies inside X11 to modify (e.g., 'xkb locale', 'all')
 InstGTK='no'		# (-g) Whether to install the GTK 2.0/3.0 config (if not present)
 SetXMap='no'		# (-x) Whether to run the setxkb script after installing
-SetXStr='5aw us us'	# (-s) Shortcut string for setxkb - 'mmm ll vv' (model layout eD-variant)
+SetXStr='5n us us'	# (-s) Shortcut string for setxkb - 'mmm ll vv' (model layout eD-variant)
 
 HelpStr="Usage: bash ${MyNAME} [optional args]\n"\
 "Run this from the directory containing the x-mod dir\n"\
