@@ -38,7 +38,8 @@ X11DIR='/usr/share/X11'; [ -d "${X11DIR}" ] || X11DIR='/usr/lib/X11'
 XKBmodel=pc105
 #~ XKBlayout='us(cmk_ed_us),gr(colemak),ru(colemak)'
 XKBlayout='us'
-XKBoption='misc:extend,lv5:caps_switch_lock,grp:shifts_toggle,compose:menu'
+# XKBoption='misc:extend,lv5:caps_switch_lock,grp:shifts_toggle,compose:menu'
+XKBoption='misc:extend,lv5:caps_switch_lock,grp:shifts_toggle'
 VerboseLvl=9			# (-v) How much info should setxkbmap print out?
 KeepXKM='no'			# (-k) Retain old /var/lib/xkb/server-*.xkm files?
 XKBdir="${X11DIR}/xkb"	# (-d) The xkb-type dir to run setxkbmap from
