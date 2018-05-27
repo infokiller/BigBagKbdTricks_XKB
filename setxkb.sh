@@ -37,9 +37,11 @@ MyNAME=`basename $0`
 X11DIR='/usr/share/X11'; [ -d "${X11DIR}" ] || X11DIR='/usr/lib/X11'
 
 #~ XKBmodel=pc104aw-zqu	# ANSI-104 keyboard w/ Angle(Z)Wide(Quote) mod
-XKBmodel=pc105caw-sl	# ISO-105 keyboard w/ CurlAngleWide(Slash) mod
+# XKBmodel=pc105caw-sl	# ISO-105 keyboard w/ CurlAngleWide(Slash) mod
+XKBmodel=pc105
 #~ XKBlayout='us(cmk_ed_us),gr(colemak),ru(colemak)'
-XKBlayout='no(cmk_ed_us)'	# Norwegian Colemak[eD]'Universal Symbols' layout
+# XKBlayout='no(cmk_ed_us)'	# Norwegian Colemak[eD]'Universal Symbols' layout
+XKBlayout='us'
 # XKBoption='misc:extend,lv5:caps_switch_lock,grp:shifts_toggle,compose:menu'
 XKBoption='misc:extend,lv5:caps_switch_lock,grp:shifts_toggle'
 VerboseLvl=9			# (-v) How much info should setxkbmap print out?
