@@ -1,4 +1,4 @@
-// vim:set commentstring=//%s:
+// vim: set filetype=xkb commentstring=//%s :
 
 // Extend mode symbols for xkb on X.Org Server 7.x
 // 2014-02-01 OEystein Bech "DreymaR" Gadmar
