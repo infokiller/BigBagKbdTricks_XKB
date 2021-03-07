@@ -52,21 +52,22 @@ X11DIR='/usr/share/X11'; [ -d "${X11DIR}" ] || X11DIR='/usr/lib/X11'
 XVERSION=''
 ModDATE=''
 
-DModDir=`dirname $0`	# (-d) Path to the script (and mod?) root directory
-ToolDir="${DModDir}/dreymar-xtools"	# The location of tool scripts (like setxkb.sh)
-DMod='xkb-data_mod'		# (--) The main name of the directory with modded xkb-data files
-DModTag="${DMod}${XVERSION:+'_v'}${XVERSION}${ModDATE:+'_'}${ModDATE}"	# (-t) Mod dir "prefix"
-DBakFix='dbak-'			# (--) Backup dir prefix
-DModFix='d'				# (--) Modded dir prefix
-InstDir="${X11DIR}"		# (-i) Path to install subfolder(s) in
-#~ InstDir="${HOME}/drey-xmod"	# (-i) Path to install subfolder(s) in
-WriteSys='no'			# (-o) Overwrite the original xkb dir with the modded one
-Restore='0'				# (-r) Reverse: Restore from backup # instead of installing
-DoBackup='ifnone'		# (-n/b) Default backup behavior is "if no backups are found"
-SubDirs='all'			# (-m) Directory/-ies inside X11 to modify (e.g., 'xkb locale', 'all')
-InstGTK='no'			# (-g) Whether to install the GTK 2.0/3.0 config (if not present)
-SetXMap='no'			# (-x) Whether to run the setxkb script after installing
-SetXStr='5n us'	# (--) Shortcut string for setxkb - 'kbd loc sym' (model layout eD-variant)
+DModDir=`dirname $0` 	# (-d) Path to the script (and mod?) root directory
+ToolDir="${DModDir}/dreymar-xtools" 	# The loc. of tool scripts (like setxkb.sh)
+DMod='xkb-data_xmod' 	# (--) The main name of the directory with modded xkb-data files
+DModTag="${DMod}${XVERSION:+'_v'}${XVERSION}${ModDATE:+'_'}${ModDATE}" 	# (-t) Mod dir "prefix"
+DBakFix='dbak-' 		# (--) Backup dir prefix
+DModFix='d' 			# (--) Modded dir prefix
+InstDir="${X11DIR}" 	# (-i) Path to install subfolder(s) in
+#~ InstDir="${HOME}/drey-xmod" 	# (-i) Path to install subfolder(s) in
+WriteSys='no' 			# (-o) Overwrite the original xkb dir with the modded one
+Restore='0' 			# (-r) Reverse: Restore from backup # instead of installing
+DoBackup='ifnone' 		# (-n/b) Default backup behavior is "if no backups are found"
+SubDirs='all' 			# (-m) Directory/-ies inside X11 to modify (e.g., 'xkb locale', 'all')
+InstGTK='no' 			# (-g) Whether to install the GTK 2.0/3.0 config (if not present)
+NoSudo='no' 			# (-s) Do not use sudo. Helpful for local dir installation.
+SetXMap='no' 			# (-x) Whether to run the setxkb script after installing
+SetXStr='5n us' 	# (--) Shortcut string for setxkb - 'kbd loc sym' (model layout eD-variant)
 ## NOTE: '# (-a)' means that the value can be set by option argument '-a <value>'
 
 HelpStr="\e[1mUsage: bash ${MyNAME} [optional args] [<kbd> [<loc> <sym>]]\e[0m\n"\
@@ -75,6 +76,7 @@ HelpStr="\e[1mUsage: bash ${MyNAME} [optional args] [<kbd> [<loc> <sym>]]\e[0m\n
 "[-#] Functionality                     - 'default'  \n"\
 "===========================================================\n"\
 "[-i] <Install path>                    - ${InstDir}\n"\
+"[-c] Change path to X11                - ${X11DIR}\n"\
 "[-o] Override install path w/ X11      - ${WriteSys}\n"\
 "[-b] Force backup       |     location - ${X11DIR}\n"\
 "[-n] Force no backup    |      default - ${DoBackup}\n"\
@@ -84,6 +86,7 @@ HelpStr="\e[1mUsage: bash ${MyNAME} [optional args] [<kbd> [<loc> <sym>]]\e[0m\n
 "[-t] <mod dir prefix tag>              - ${DModTag}\n"\
 "[-g] Install GTK 2.0/3.0 edit config?  - ${InstGTK}\n"\
 "[-x] Run the setxkbmap script?         - ${SetXMap}\n"\
+"[-s] Install without using sudo?       - ${NoSudo}\n"\
 "[--] [Setxkb ShortStr <kbd loc sym>]   - ${SetXStr}\n"
 #~ "( - <val> : Default settings)\n"
 
@@ -137,15 +140,17 @@ MyError()
 #~ }
 
 #~ if [ "$#" == 0 ]; then PrintHelpAndExit 2; fi # No args
-while getopts "obngxm:i:d:t:r:h?" cmdarg; do
+while getopts "obngxsm:i:c:d:t:r:h?" cmdarg; do
 	case $cmdarg in
 		o)	WriteSys='yes'			;;
 		b)	DoBackup='yes'			;;
 		n)	DoBackup='no'			;;
 		g)	InstGTK='yes'			;;
 		x)	SetXMap='yes'			;;
+		s)	NoSudo='yes'			;;
 		m)	SubDirs="$OPTARG"		;;
 		i)	InstDir="$OPTARG"		;;
+		c)	X11DIR="$OPTARG"		;;
 		d)	DModDir="$OPTARG"		;;
 		t)	DModTag="$OPTARG"		;;
 		r)	Restore="$OPTARG"		;;
@@ -197,10 +202,14 @@ fi
 
 ## Check for root privileges (if not root, sudo command); note that root is only needed in some cases!
 DoSudo=''
-if [ "$EUID" -ne 0 ]; then # not root, so test for and use sudo instead (but some distros don't have it!)
-    #[ command -v sudo >/dev/null 2>&1 ] || MyError "Root access needed - sudo won't run!"
-    ( command -v sudo >/dev/null 2>&1 ) || MyWarning "Root/superuser access may be needed!"
-    DoSudo='sudo'
+if [ ${NoSudo} = 'yes' ]; then
+	MyPoint "Not using sudo."
+else
+	if [ "$EUID" -ne 0 ]; then # not root, so test for and use sudo instead (but some distros don't have it!)
+		#[ command -v sudo >/dev/null 2>&1 ] || MyError "Root access needed - sudo won't run!"
+		( command -v sudo >/dev/null 2>&1 ) || MyWarning "Root/superuser access may be needed!"
+		DoSudo='sudo'
+	fi
 fi
 
 ## Perform the actual backup(s)
